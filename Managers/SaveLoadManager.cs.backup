@@ -1,0 +1,45 @@
+﻿/* Written by Cameron Willams
+ * 
+ * This is the beginnings of the class that will be used for serializing
+ * game data for saving and exporting to a binary file. Based on a Unity
+ * Learn live session tutorial about data persistence.
+ * 
+ * Last updated 7 August 2019.
+ */
+
+using UnityEngine;
+using System;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
+​
+​
+public void Save()
+{
+    BinaryFormatter bf = new BinaryFormatter();
+    FileStream file = File.Create(Application.persistentDataPath + "/playerInfo.dat");
+​
+    PlayerData data = new PlayerData();
+    data.hull = MainManager.Player.hull;
+​
+    bf.Serialize(file, data);
+    file.Close();
+}
+​
+public void Load()
+{
+    if (File.Exists(Application.persistentDataPath + "/playerInfo.dat"))
+    {
+        BinaryFormatter bf = new BinaryFormatter();
+        FileStream file = File.Open(Application.persistentDataPath + "playerInfo.dat", FileMode.Open);
+        PlayerData data = (PlayerData)bf.Deserialize(file);
+        file.Close();
+​
+        MainManager.Player.hull = data.hull;
+    }
+}
+​
+[Serializable]
+class PlayerData
+{
+    public float hull;
+}
